@@ -1,6 +1,6 @@
 package com.example.demo.dto.US0004_US0005;
 
-import com.example.demo.entity.Flights;
+import com.example.demo.model.Flights;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
