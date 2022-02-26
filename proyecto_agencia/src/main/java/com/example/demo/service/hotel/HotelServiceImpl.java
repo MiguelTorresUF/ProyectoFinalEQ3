@@ -1,6 +1,10 @@
 package com.example.demo.service.hotel;
 
+import com.example.demo.model.Hotels;
+import com.example.demo.repository.HotelRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Vanessa Rocha
@@ -8,6 +12,16 @@ import org.springframework.stereotype.Service;
 /** Servicio de Hotel implementa de HotelService*/
 @Service
 public class HotelServiceImpl implements HotelService{
+    @Autowired
+    HotelRepository hotelRepository;
+
+    @Override
+    @Transactional()
+    public Hotels save(Hotels hotels) {
+        return hotelRepository.save(hotels);
+    }
+
+
 //    /** Instancia a la clase HotelRepository*/
 //
 //    @Autowired

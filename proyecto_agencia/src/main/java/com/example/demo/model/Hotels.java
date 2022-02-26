@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.hibernate.type.descriptor.sql.TinyIntTypeDescriptor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -30,6 +31,7 @@ public class Hotels {
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date disponibilityDateTo;
-
-    private boolean isBooking;
+    private boolean isbooking;
+    //YA FUNCIONA EL BOLEAN TUVE QUE CAMBIAR NOMBRE LUEGO TAMBIEN QUEDA PENDIENTE MODIFICAR EL NOMBRE DE LA RAMA A AGREGAR_HOTEL
+    //private Boolean isBooking;
 }
