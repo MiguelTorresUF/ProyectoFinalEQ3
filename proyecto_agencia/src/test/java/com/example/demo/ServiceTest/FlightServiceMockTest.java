@@ -1,25 +1,7 @@
 package com.example.demo.ServiceTest;
 
-import com.example.demo.dto.US0004_US0005.ResponseFlightsDTO;
-import com.example.demo.dto.US0003_US0006.*;
-import com.example.demo.model.Flights;
-import com.example.demo.exception.*;
-import com.example.demo.repository.FlightRepository;
-import com.example.demo.service.flight.VuelosServiceImpl;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FlightServiceMockTest {
