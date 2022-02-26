@@ -3,6 +3,7 @@ package com.example.demo.service.hotel;
 import com.example.demo.dto.US0001_US0002.ResponseDTO;
 import com.example.demo.dto.US0003_US0006.PayloadHotelsDTO;
 import com.example.demo.dto.US0003_US0006.ResponseReservationHotel;
+import com.example.demo.model.Hotels;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
  */
 /** Representa la interface de HotelService*/
 public interface HotelService {
+    public Hotels save(Hotels hotels);
 //    /** Método para obtener todos los hoteles
 //     * @return la lista de todos los hoteles*/
 //    public ResponseDTO getHotels();
