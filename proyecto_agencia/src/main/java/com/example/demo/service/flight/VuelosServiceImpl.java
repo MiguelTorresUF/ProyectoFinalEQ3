@@ -47,6 +47,11 @@ public class VuelosServiceImpl implements VuelosService{
         return response;
     }
 
+    @Override
+    public Flights save(Flights flights) {
+        return flightRepository.save(flights);
+    }
+
     private void validFlightsParams(Date dateFrom, Date dateTo, String origin, String destination){
         if(destination == null || destination == ""){
             throw new NotDestinationException("El destino ingresado no existe.");

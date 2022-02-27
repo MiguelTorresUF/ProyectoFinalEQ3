@@ -9,4 +9,5 @@ import java.util.Date;
 public interface VuelosService {
     public Iterable<Flights> findAll();
     public ResponseFlightsDTO getFlightsAvailable(Date dateFrom, Date dateTo, String origin, String destination);
+    public Flights save(Flights flights);
 }
