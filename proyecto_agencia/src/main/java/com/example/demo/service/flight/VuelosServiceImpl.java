@@ -1,6 +1,8 @@
 package com.example.demo.service.flight;
 
+import com.example.demo.dto.flightsDTOS.FlightsDTO;
 import com.example.demo.dto.flightsDTOS.ResponseFlightsDTO;
+import com.example.demo.dto.flightsDTOS.ResponsePPDFlightDTO;
 import com.example.demo.exception.BadDateException;
 import com.example.demo.exception.ListEmptyException;
 import com.example.demo.exception.NotDestinationException;
@@ -8,11 +10,14 @@ import com.example.demo.exception.NotOriginException;
 import com.example.demo.model.Flights;
 import com.example.demo.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -21,14 +26,16 @@ public class VuelosServiceImpl implements VuelosService{
     @Autowired
     FlightRepository flightRepository;
 
+    //BUSCAR TODOS
     @Override
     @Transactional(readOnly = true)
     public Iterable<Flights> findAll() {
         return flightRepository.findAll();
     }
 
-
+    //BUSCAR POR FILTROS
     @Override
+    @Transactional(readOnly = true)
     public ResponseFlightsDTO getFlightsAvailable(Date dateFrom, Date dateTo, String origin, String destination) {
         List<Flights> flight = flightRepository.findAll();
 
@@ -47,10 +54,37 @@ public class VuelosServiceImpl implements VuelosService{
         return response;
     }
 
+    //AGREGAR
     @Override
     public Flights save(Flights flights) {
         return flightRepository.save(flights);
     }
+
+    //ACTUALIZAR
+    @Override
+    public ResponsePPDFlightDTO update(FlightsDTO flights, String flightNumber) {
+        List<Flights> list = flightRepository.findAll();
+        Optional<Flights> listFilter = list.stream()
+                .filter(
+                    l -> l.getFlightNumber().equals(flightNumber)).findFirst();
+
+
+        listFilter.get().setName(flights.getName());
+        listFilter.get().setOrigin(flights.getOrigin());
+        listFilter.get().setDestination(flights.getDestination());
+        listFilter.get().setSeatType(flights.getSeatType());
+        listFilter.get().setFlightPrice(flights.getFlightPrice());
+        listFilter.get().setGoingDate(flights.getGoingDate());
+        listFilter.get().setReturnDate(flights.getReturnDate());
+
+        flightRepository.save(listFilter.get());
+
+        ResponsePPDFlightDTO response = new ResponsePPDFlightDTO("Vuelo modificado correctamente");
+        return response;
+    }
+
+
+
 
     private void validFlightsParams(Date dateFrom, Date dateTo, String origin, String destination){
         if(destination == null || destination == ""){
