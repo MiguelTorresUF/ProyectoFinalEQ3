@@ -14,4 +14,5 @@ public interface VuelosService {
     public ResponseFlightsDTO getFlightsAvailable(Date dateFrom, Date dateTo, String origin, String destination);
     public Flights save(Flights flights);
     public ResponsePPDFlightDTO update(FlightsDTO flights, String flightNumber);
+    public ResponsePPDFlightDTO deleteFlight(String flightNumber);
 }
