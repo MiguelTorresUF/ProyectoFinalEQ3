@@ -84,6 +84,29 @@ public class VuelosServiceImpl implements VuelosService{
     }
 
 
+    //BORRAR
+    @Override
+    public ResponsePPDFlightDTO deleteFlight(String flightNumber) {
+        List<Flights> list = flightRepository.findAll();
+
+        Optional<Flights> listFilter = list.stream()
+                .filter(
+                    l -> l.getFlightNumber().equals(flightNumber)).findFirst();
+
+
+        if(listFilter.isEmpty()){
+            ResponsePPDFlightDTO response = new ResponsePPDFlightDTO("El vuelo no se encuentra registrado.");
+            return response;
+        }
+
+        int id = listFilter.get().getId_vuelo();
+        flightRepository.deleteById(id);
+
+        ResponsePPDFlightDTO response = new ResponsePPDFlightDTO("Vuelo eliminado correctamente");
+        return response;
+    }
+
+
 
 
     private void validFlightsParams(Date dateFrom, Date dateTo, String origin, String destination){

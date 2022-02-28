@@ -57,4 +57,10 @@ public class FlightsRestController {
         return new ResponseEntity<>(vuelosService.update(flights, flightNumber), HttpStatus.CREATED);
     }
 
+    //Elimina un registro por flightNumber.
+    @DeleteMapping(path = "/api/v1/flights/delete", params = {"flightNumber"})
+    public ResponseEntity<?> deleteFlight(@Valid @RequestParam() String flightNumber){
+        return new ResponseEntity<>(vuelosService.deleteFlight(flightNumber), HttpStatus.OK);
+    }
+
 }
