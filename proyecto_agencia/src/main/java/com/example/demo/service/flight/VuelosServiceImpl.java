@@ -7,7 +7,18 @@ import org.springframework.stereotype.Service;
  */
 /** Servicio de Vuelos implementa de VuelosService*/
 @Service
-public class VuelosServiceImpl implements VuelosService{
+public class VuelosServiceImpl implements VuelosService {
+
+
+
+}
+
+
+
+
+
+
+
 //    /** Instancia a la clase VuelosRepository*/
 //    @Autowired
 //    VuelosRepository vuelosRepository;
@@ -180,4 +191,4 @@ public class VuelosServiceImpl implements VuelosService{
 //        }
 //        return interest;
 //    }
-}
+

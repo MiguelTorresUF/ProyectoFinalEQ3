@@ -1,9 +1,6 @@
 package com.example.demo.service.flight;
 
-/**
- * @author Vanessa Rocha
- */
-/** Representa la interface de HotelService*/
+
 public interface VuelosService {
 //    /** Método para obtener todos los vuelos
 //     * @return todos los vuelos disponibles*/
