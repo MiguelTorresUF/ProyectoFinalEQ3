@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -25,15 +26,13 @@ public class People {
     @Column(nullable = false)
     private int id_people;
 
-    @Column(nullable = false)
     private String dni;
 
     private String name;
     private String lastname;
 
-    @Column(nullable = false)
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date birthDate;
+    private Date birth_date;
 
     @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",message = "Email no valido.")
     private String mail;

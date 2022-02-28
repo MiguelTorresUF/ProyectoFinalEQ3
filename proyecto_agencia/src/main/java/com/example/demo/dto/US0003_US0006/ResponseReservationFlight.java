@@ -13,11 +13,8 @@ import lombok.NoArgsConstructor;
 /** Representa el objeto con los datos necesarios para retornar una reservacion de vuelos*/
 public class ResponseReservationFlight {
     private String username;
-    private double amount;
-    private double interest;
-    private double total;
 /** Proviene de la clase FlightReservationDTO*/
     private FlightReservationDTO flightReservation;
 /** Proviene de la clase ResponseStatusCode*/
-    private ResponseStatusCode statusCode;
+   // private ResponseStatusCode statusCode;
 }
