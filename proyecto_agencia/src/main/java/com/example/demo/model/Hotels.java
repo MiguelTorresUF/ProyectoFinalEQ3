@@ -19,7 +19,7 @@ public class Hotels {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private int id_hotel;
-
+    @Column(unique = true)
     private String hotelCode;
     private String name;
     private String place;
