@@ -20,7 +20,7 @@ public class PeopleDTO {
     private String name;
     private String lastname;
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date birthDate;
+    private Date birth_date;
     @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",message = "Email no valido.")
     private String mail;
 }

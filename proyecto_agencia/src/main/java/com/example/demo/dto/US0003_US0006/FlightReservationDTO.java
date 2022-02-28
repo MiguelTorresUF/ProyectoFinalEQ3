@@ -3,6 +3,7 @@ package com.example.demo.dto.US0003_US0006;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
@@ -21,15 +22,15 @@ import java.util.Date;
  */
 public class FlightReservationDTO {
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date dateFrom;
+    private Date goingDate;
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date dateTo;
+    private Date returnDate;
     private String origin;
     private String destination;
     private String flightNumber;
     @Digits(fraction = 0, integer = 1, message = "La cantidad de personas debe ser un valor numerico.")
     private int seats;
-    private String seatsType;
+    private String seatType;
     /**Array de personas de la clase PeopleDTO*/
     private ArrayList<@Valid PeopleDTO> people;
     /**Proviene de la clase PaymentMethod*/
