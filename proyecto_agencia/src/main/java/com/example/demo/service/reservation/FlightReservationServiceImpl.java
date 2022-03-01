@@ -5,10 +5,13 @@ import com.example.demo.dto.US0003_US0006.*;
 import com.example.demo.exception.*;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.datatransfer.FlavorListener;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,13 @@ public class FlightReservationServiceImpl implements FlightReservationService {
 
     @Autowired
     PeopleRepository peopleRepository;
+
+    @Autowired
+    UsersRepository usersRepository;
+
+    @Autowired
+    PaymentMethodRepository paymentMethod;
+
 
 
     //Reservacion de un vuelo
@@ -184,6 +194,7 @@ public class FlightReservationServiceImpl implements FlightReservationService {
         return interest;
     }
 
+    @Override
     //Editar una reserva de vuelo
     public ResponseFlightReservationDTO updateReservation(PayloadFlightsDTO payloadDTO, int idflight_reservation) {
         Optional<Flight_reservation> list = flightReservationRepository.findById(idflight_reservation);
@@ -237,48 +248,41 @@ public class FlightReservationServiceImpl implements FlightReservationService {
         return response;
     }
 
-    //Consultatodo los vuelosreservados
     @Override
-    @Transactional(readOnly = true)
-    public Iterable<Flight_reservation> findAll(){
-        List<Flight_reservation> ac = flightReservationRepository.findAll();
+    //Delete una reserva de vuelo
+    public ResponseFlightReservationDTO deleteReservationFlight(int idflight_reservation){
+        Optional<Flight_reservation> list = flightReservationRepository.findById(idflight_reservation);
 
-        if(ac.size() == 0){
-            throw new ListEmptyException("La lista se encuentra vacia");
+        Optional<PaymentMethod> pay = paymentMethod.findById( list.get().getPaymentMethodF().getId_paymentMethod());
+
+        Optional<Users> users = usersRepository.findById(list.get().getUserF().getId_user());
+
+        List<Flight_people> listpeople = flightPeopleRepository.findAll();
+        List<Flight_people> people =  listpeople.stream().filter(lp ->
+                lp.getFlight_reservation_p().getIdflight_reservation() ==
+                        (list.get().getIdflight_reservation())).collect(Collectors.toList());
+
+        for (int i=0; i < people.size(); i++){
+            Optional<People> pe = peopleRepository.findById(people.get(i).getPeople_fr().getId_people());
+
+            peopleRepository.deleteById(pe.get().getId_people());
         }
 
-        List<ResponseReservationFlight> responseReservationFlights = new ArrayList<>();
-        PayloadFlightsDTO payloadDTO = new PayloadFlightsDTO();
-        PaymentMethod payment = new PaymentMethod();
-        PeopleDTO peopleDTO = new PeopleDTO();
+        int id = list.get().getIdflight_reservation();
+        flightReservationRepository.deleteById(id);
 
-                ac.forEach(reservation -> {
-                    ResponseReservationFlight aux = new ResponseReservationFlight();
-                    aux.setUsername(reservation.getUserF().getUserName());
-                    aux.getFlightReservation().setGoingDate(reservation.getGoingDate());
-                    aux.getFlightReservation().setReturnDate(reservation.getReturnDate());
-                    aux.getFlightReservation().setOrigin(reservation.getOrigin());
-                    aux.getFlightReservation().setOrigin(reservation.getOrigin());
-                    aux.getFlightReservation().setDestination(reservation.getDestination());
-                    aux.getFlightReservation().setFlightNumber(reservation.getFlightNumber());
-                    aux.getFlightReservation().setSeats(reservation.getSeats());
-                    aux.getFlightReservation().setSeatType(reservation.getSeatType());
+        int pa = pay.get().getId_paymentMethod();
+        paymentMethod.deleteById(pa);
 
-                    peopleDTO.setDni(peopleDTO.getDni());
-                    peopleDTO.setName(peopleDTO.getName());
-                    peopleDTO.setLastname(peopleDTO.getLastname());
-                    peopleDTO.setBirth_date(peopleDTO.getBirth_date());
-                    peopleDTO.setMail(peopleDTO.getMail());
+        int u = users.get().getId_user();
+        usersRepository.deleteById(u);
 
-                    payment.setType(payloadDTO.getFlightReservation().getPaymentMethod().getType());
-                    payment.setNumber(payloadDTO.getFlightReservation().getPaymentMethod().getNumber());
-                    payment.setDues(payloadDTO.getFlightReservation().getPaymentMethod().getDues());
+        ResponseFlightReservationDTO response = new ResponseFlightReservationDTO("Reserva de vuelo se elimino correctamente.");
+        return response;
 
-
-                });
-
-        return flightReservationRepository.findAll();
     }
+
+   
 
 
 
