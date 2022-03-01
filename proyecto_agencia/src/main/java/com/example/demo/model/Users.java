@@ -28,4 +28,12 @@ public class Users {
 
     @OneToMany(mappedBy = "userH", cascade = {CascadeType.ALL})
     private Set<Hotel_booking> hotel_booking;
+
+    //mapeado por un objeto de la entidad
+    @OneToMany(mappedBy = "userid", cascade = {CascadeType.ALL})
+    private Set<TouristicPackage> touristicPackagesid;
+//
+//    //mapeado por un objeto de la entidad
+//    @OneToMany(mappedBy = "username", cascade = {CascadeType.ALL})
+//    private Set<TouristicPackage> touristicPackagesname;
 }
