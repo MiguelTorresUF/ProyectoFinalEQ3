@@ -10,7 +10,7 @@ import com.example.demo.model.Users;
 import java.util.List;
 
 public interface FlightReservationService {
-    //public Iterable<Flight_reservation> findAll();
     public ResponseFlightReservationDTO postFlightReservation(PayloadFlightsDTO payloadDTO, String status);
-
+    public ResponseFlightReservationDTO updateReservation(PayloadFlightsDTO payloadDTO, int idflight_reservation);
+    public ResponseFlightReservationDTO deleteReservationFlight(int idflight_reservation);
 }

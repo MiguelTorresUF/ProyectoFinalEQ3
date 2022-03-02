@@ -66,7 +66,7 @@ public class HotelBookingServiceImpl implements HotelBookingService{
             person.setDni(p.getDni());
             person.setName(p.getName());
             person.setLastname(p.getLastname());
-            person.setBirthDate(p.getBirthDate());
+            person.setBirth_date(p.getBirth_date());
             person.setMail(p.getMail());
             peopleRepository.save(person);
             Hotel_people person2 = new Hotel_people();
@@ -104,7 +104,7 @@ public class HotelBookingServiceImpl implements HotelBookingService{
             person.get().setDni(p.get(i).getDni());
             person.get().setName(p.get(i).getName());
             person.get().setLastname(p.get(i).getLastname());
-            person.get().setBirthDate(p.get(i).getBirthDate());
+            person.get().setBirth_date(p.get(i).getBirth_date());
             person.get().setMail(p.get(i).getMail());
             peopleRepository.save(person.get());
         }

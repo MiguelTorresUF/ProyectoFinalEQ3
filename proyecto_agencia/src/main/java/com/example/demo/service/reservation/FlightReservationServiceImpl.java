@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +23,16 @@ public class FlightReservationServiceImpl implements FlightReservationService {
 
     @Autowired
     FlightPeopleRepository flightPeopleRepository;
+
+    @Autowired
+    PeopleRepository peopleRepository;
+
+    @Autowired
+    UsersRepository usersRepository;
+
+    @Autowired
+    PaymentMethodRepository paymentMethod;
+
 
 
     //Reservacion de un vuelo
@@ -53,67 +60,66 @@ public class FlightReservationServiceImpl implements FlightReservationService {
         //Validar el tipo de metodo
         int interest = validPaymentMethod(payloadDTO.getFlightReservation().getPaymentMethod().getType(), payloadDTO.getFlightReservation().getPaymentMethod().getDues());
 
-       //Return
+        //Return
         String[] parts = status.split(" ");
-       String codeString = parts[0];
-       int codeInt = Integer.parseInt(codeString);
+        String codeString = parts[0];
+        int codeInt = Integer.parseInt(codeString);
 
-       if(codeInt == 200){
-           responseStatusCode.setCode(codeInt);
-           responseStatusCode.setMessage("Reserva de vuelo dada de alta correctamente");
+        if(codeInt == 200){
+            responseStatusCode.setCode(codeInt);
+            responseStatusCode.setMessage("Reserva de vuelo dada de alta correctamente");
 
-               PaymentMethod payment = new PaymentMethod();
-               payment.setType(payloadDTO.getFlightReservation().getPaymentMethod().getType());
-               payment.setNumber(payloadDTO.getFlightReservation().getPaymentMethod().getNumber());
-               payment.setDues(payloadDTO.getFlightReservation().getPaymentMethod().getDues());
+            PaymentMethod payment = new PaymentMethod();
+            payment.setType(payloadDTO.getFlightReservation().getPaymentMethod().getType());
+            payment.setNumber(payloadDTO.getFlightReservation().getPaymentMethod().getNumber());
+            payment.setDues(payloadDTO.getFlightReservation().getPaymentMethod().getDues());
 
-               // se inserta el usuario
-               Users users = new Users();
-               users.setUserName(payloadDTO.getUserName());
-               users.setId_user(users.getId_user());
+            // se inserta el usuario
+            Users users = new Users();
+            users.setUserName(payloadDTO.getUserName());
+            users.setId_user(users.getId_user());
 
-               //se inserta la reservacion
-               Flight_reservation aux = new Flight_reservation();
-               aux.setDestination(payloadDTO.getFlightReservation().getDestination());
-               aux.setOrigin(payloadDTO.getFlightReservation().getOrigin());
-               aux.setFlightNumber(payloadDTO.getFlightReservation().getFlightNumber());
-               aux.setGoingDate(payloadDTO.getFlightReservation().getGoingDate());
-               aux.setSeatType(payloadDTO.getFlightReservation().getSeatType());
-               aux.setReturnDate(payloadDTO.getFlightReservation().getReturnDate());
-               aux.setSeats(payloadDTO.getFlightReservation().getSeats());
-               aux.setUserF(users);
-               aux.setPaymentMethodF(payment);
+            //se inserta la reservacion
+            Flight_reservation aux = new Flight_reservation();
+            aux.setDestination(payloadDTO.getFlightReservation().getDestination());
+            aux.setOrigin(payloadDTO.getFlightReservation().getOrigin());
+            aux.setFlightNumber(payloadDTO.getFlightReservation().getFlightNumber());
+            aux.setGoingDate(payloadDTO.getFlightReservation().getGoingDate());
+            aux.setSeatType(payloadDTO.getFlightReservation().getSeatType());
+            aux.setReturnDate(payloadDTO.getFlightReservation().getReturnDate());
+            aux.setSeats(payloadDTO.getFlightReservation().getSeats());
+            aux.setUserF(users);
+            aux.setPaymentMethodF(payment);
 
-       //para isertar en people segun lo que se obtenga en el postman
-       List<PeopleDTO> p = payloadDTO.getFlightReservation().getPeople();
+            //para isertar en people segun lo que se obtenga en el postman
+            List<PeopleDTO> p = payloadDTO.getFlightReservation().getPeople();
 
-         p.forEach(flight -> {
-           People people = new People();
-             System.out.println(flight);
-               people.setDni(flight.getDni());
-               people.setName(flight.getName());
-               people.setLastname(flight.getLastname());
-               people.setBirth_date(flight.getBirth_date());
-               people.setMail(flight.getMail());
+            p.forEach(flight -> {
+                People people = new People();
+                System.out.println(flight);
+                people.setDni(flight.getDni());
+                people.setName(flight.getName());
+                people.setLastname(flight.getLastname());
+                people.setBirth_date(flight.getBirth_date());
+                people.setMail(flight.getMail());
 
-           List<People> people1 = new ArrayList<>();
-           people1.add(people);
+                List<People> people1 = new ArrayList<>();
+                people1.add(people);
 
-             System.out.println(people.getName());
+                System.out.println(people.getName());
 
-           //se inserta el Relacion tabla people y reservation
-           Flight_people flight_people = new Flight_people();
-           flight_people.setFlight_reservation_p(aux);
-           flight_people.setPeople_fr(people);
+                //se inserta el Relacion tabla people y reservation
+                Flight_people flight_people = new Flight_people();
+                flight_people.setFlight_reservation_p(aux);
+                flight_people.setPeople_fr(people);
 
-           flightPeopleRepository.save(flight_people);
-           });
-       }
+                flightPeopleRepository.save(flight_people);
+            });
+        }
 
         ResponseFlightReservationDTO response = new ResponseFlightReservationDTO("Reserva de vuelo dada de alta correctamente.");
         return response;
     }
-
 
     //Validacion de destino
     public void validFlightsParams(Date goingDate, Date returnDate, String origin, String destination ){
@@ -127,8 +133,8 @@ public class FlightReservationServiceImpl implements FlightReservationService {
         List<Flights> flight_reservation = flightRepository.findAll();
 
         List<Flights> newList = flight_reservation.stream().filter(
-                vuelo -> (vuelo.getDestination().equals(destination)) &&
-                        vuelo.getOrigin().equals(origin))
+                        vuelo -> (vuelo.getDestination().equals(destination)) &&
+                                vuelo.getOrigin().equals(origin))
                 .collect(Collectors.toList());
 
         if(newList.size() == 0){
@@ -185,8 +191,88 @@ public class FlightReservationServiceImpl implements FlightReservationService {
         return interest;
     }
 
+    @Override
+    //Editar una reserva de vuelo
+    public ResponseFlightReservationDTO updateReservation(PayloadFlightsDTO payloadDTO, int idflight_reservation) {
+        Optional<Flight_reservation> list = flightReservationRepository.findById(idflight_reservation);
 
+        list.get().getPaymentMethodF().setType(payloadDTO.getFlightReservation().getPaymentMethod().getType());
+        list.get().getPaymentMethodF().setNumber(payloadDTO.getFlightReservation().getPaymentMethod().getNumber());
+        list.get().getPaymentMethodF().setDues(payloadDTO.getFlightReservation().getPaymentMethod().getDues());
 
+        // se inserta el usuario
+        list.get().getUserF().setUserName(payloadDTO.getUserName());
+
+        //se inserta la reservacion
+        list.get().setDestination(payloadDTO.getFlightReservation().getDestination());
+        list.get().setOrigin(payloadDTO.getFlightReservation().getOrigin());
+        list.get().setFlightNumber(payloadDTO.getFlightReservation().getFlightNumber());
+        list.get().setGoingDate(payloadDTO.getFlightReservation().getGoingDate());
+        list.get().setSeatType(payloadDTO.getFlightReservation().getSeatType());
+        list.get().setReturnDate(payloadDTO.getFlightReservation().getReturnDate());
+        list.get().setSeats(payloadDTO.getFlightReservation().getSeats());
+        list.get().setUserF(list.get().getUserF());
+        list.get().setPaymentMethodF(list.get().getPaymentMethodF());
+
+        //para isertar en people segun lo que se obtenga en el postman
+        List<Flight_people> listpeople = flightPeopleRepository.findAll();
+
+        List<Flight_people> people =  listpeople.stream().filter(lp ->
+                lp.getFlight_reservation_p().getIdflight_reservation() ==
+                        (list.get().getIdflight_reservation())).collect(Collectors.toList());
+
+        System.out.println(list.get().getIdflight_reservation() + " id user ");
+
+        List<PeopleDTO> p = payloadDTO.getFlightReservation().getPeople();
+        for (int i=0; i < people.size(); i++){
+            Optional<People> pe = peopleRepository.findById(people.get(i).getPeople_fr().getId_people());
+
+            pe.get().setDni(p.get(i).getDni());
+            pe.get().setName(p.get(i).getName());
+            pe.get().setLastname(p.get(i).getLastname());
+            pe.get().setBirth_date(p.get(i).getBirth_date());
+            pe.get().setMail(p.get(i).getMail());
+
+            peopleRepository.save(pe.get());
+        }
+        flightReservationRepository.save(list.get());
+        ResponseFlightReservationDTO response = new ResponseFlightReservationDTO("Reserva de vuelo modificada correctamente.");
+        return response;
+    }
+
+    @Override
+    //Delete una reserva de vuelo
+    public ResponseFlightReservationDTO deleteReservationFlight(int idflight_reservation){
+        Optional<Flight_reservation> list = flightReservationRepository.findById(idflight_reservation);
+
+        Optional<PaymentMethod> pay = paymentMethod.findById( list.get().getPaymentMethodF().getId_paymentMethod());
+
+        Optional<Users> users = usersRepository.findById(list.get().getUserF().getId_user());
+
+        List<Flight_people> listpeople = flightPeopleRepository.findAll();
+        List<Flight_people> people =  listpeople.stream().filter(lp ->
+                lp.getFlight_reservation_p().getIdflight_reservation() ==
+                        (list.get().getIdflight_reservation())).collect(Collectors.toList());
+
+        for (int i=0; i < people.size(); i++){
+            Optional<People> pe = peopleRepository.findById(people.get(i).getPeople_fr().getId_people());
+
+            peopleRepository.deleteById(pe.get().getId_people());
+        }
+
+        int id = list.get().getIdflight_reservation();
+        flightReservationRepository.deleteById(id);
+
+        int pa = pay.get().getId_paymentMethod();
+        paymentMethod.deleteById(pa);
+
+        int u = users.get().getId_user();
+        usersRepository.deleteById(u);
+
+        ResponseFlightReservationDTO response = new ResponseFlightReservationDTO("Reserva de vuelo se elimino correctamente.");
+        return response;
+
+    }
 
 
 }
