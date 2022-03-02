@@ -1,4 +1,4 @@
-package com.example.demo.dto.US0004_US0005;
+package com.example.demo.dto.flightsDTOS;
 
 import com.example.demo.model.Flights;
 import lombok.AllArgsConstructor;

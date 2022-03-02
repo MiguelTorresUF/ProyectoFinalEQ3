@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ResponseHotelBookingDTO {
-    String message;
+@AllArgsConstructor
+public class ResponseFlightReservationDTO {
+    private String message;
 }

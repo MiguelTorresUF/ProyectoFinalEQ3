@@ -53,4 +53,7 @@ public class Flight_reservation {
     @OneToMany(mappedBy = "flight_reservation_p", cascade = {CascadeType.ALL})
     private Set<Flight_people> flight_people;
 
+    @OneToMany(mappedBy = "fk_id_reservation", cascade = {CascadeType.ALL})
+    private Set<BookingsOrReservations> reservation;
+
 }

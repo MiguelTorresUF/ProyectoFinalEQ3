@@ -47,4 +47,8 @@ public class Hotel_booking {
     @OneToMany(mappedBy = "hotel_booking_p", cascade = {CascadeType.ALL})
     private Set<Hotel_people> hotel_people;
 
+    //mapeado por un objeto de la entidad
+    @OneToMany(mappedBy = "fk_id_booking", cascade = {CascadeType.ALL})
+    private Set<BookingsOrReservations> booking;
+
 }

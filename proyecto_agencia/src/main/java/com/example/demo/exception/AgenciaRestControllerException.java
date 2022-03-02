@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,15 @@ public class AgenciaRestControllerException {
         ErrorDTO error =new ErrorDTO();
         error.setError("ERROR");
         error.setDescription("El formato de alguna fecha, es incorrecto.");
+        return new ResponseEntity<ErrorDTO>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<ErrorDTO> duplicateKey()
+    {
+        ErrorDTO error =new ErrorDTO();
+        error.setError("ERROR");
+        error.setDescription("Se esta duplicando un campo único");
         return new ResponseEntity<ErrorDTO>(error, HttpStatus.BAD_REQUEST);
     }
 

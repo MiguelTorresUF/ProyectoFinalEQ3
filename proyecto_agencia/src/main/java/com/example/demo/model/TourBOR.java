@@ -1,14 +1,11 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -16,23 +13,23 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name="flight_people")
-public class Flight_people {
-
+@Table(name="tours_bor")
+public class TourBOR {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private int id_flight_people;
+    private int id_tours_bor;
 
     //fk
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "idflight_reservation")
-    private Flight_reservation flight_reservation_p;
+    @JoinColumn(name = "book_res_id1")
+    private BookingsOrReservations fk_book_res_id1;
 
-
-    //fk
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id_people")
-    private People people_fr;
+    @JoinColumn(name = "book_res_id2")
+    private BookingsOrReservations fk_book_res_id2;
 
+    //mapeos
+    @OneToMany(mappedBy = "fk_bookings_or_reservations", cascade = {CascadeType.ALL})
+    private Set<TouristicPackage> touristicPackages;
 }
