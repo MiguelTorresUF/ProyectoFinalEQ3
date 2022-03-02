@@ -23,10 +23,10 @@ public class FlightReservationRestController {
     }
 
     //Listado de reserva de vuelos.
-   /*@GetMapping("/api/v1/flight-reservations/")
+   @GetMapping("/api/v1/flight-reservations/")
     public ResponseEntity<?> returnAllFlights(){
         return new ResponseEntity<>(flightReservationService.findAll(), HttpStatus.OK);
-    }*/
+    }
 
     //Actualizar reserva de vuelos
     @PutMapping(path = "/api/v1/flight-reservation/edit", params = {"idflight_reservation"})
