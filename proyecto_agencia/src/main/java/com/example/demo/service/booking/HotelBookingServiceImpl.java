@@ -6,10 +6,8 @@ import com.example.demo.dto.US0003_US0006.PeopleDTO;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,10 +26,13 @@ public class HotelBookingServiceImpl implements HotelBookingService{
     HotelPeopleRepository hotelPeopleRepository;
 
     @Override
-    public ResponseHotelBookingDTO getHotelBooking() {
-        System.out.println("MÉTODO GETBOOKING EN EL SERVICEIMPL");
-        System.out.println();
-        return new ResponseHotelBookingDTO(hotelBookingRepository.findAll().toString());
+    public List<Hotel_booking> getHotelBooking() {
+        hotelBookingRepository.findAll();
+        List<Hotel_booking> booking = hotelBookingRepository.findAll();
+        for (int i=0; i< booking.size();i++){
+            System.out.println(booking.get(i).getPaymentMethodH());
+        }
+        return booking;
     }
 
     @Override
@@ -41,13 +42,13 @@ public class HotelBookingServiceImpl implements HotelBookingService{
         user.setId_user(user.getId_user());
         user.setUserName(payloadHotelsDTO.getUsername());
         usersRepository.save(user);
-        // Para el método de pago
+        // Set paymentMethod
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setType(payloadHotelsDTO.getBooking().getPaymentMethod().getType());
         paymentMethod.setNumber(payloadHotelsDTO.getBooking().getPaymentMethod().getNumber());
         paymentMethod.setDues(payloadHotelsDTO.getBooking().getPaymentMethod().getDues());
         paymentMethodRepository.save(paymentMethod);
-        // Para el booking
+        // Set booking
         Hotel_booking booking = new Hotel_booking();
         booking.setDateFrom(payloadHotelsDTO.getBooking().getDateFrom());
         booking.setDateTo(payloadHotelsDTO.getBooking().getDateTo());
