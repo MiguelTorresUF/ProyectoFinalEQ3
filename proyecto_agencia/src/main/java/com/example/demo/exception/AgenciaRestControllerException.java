@@ -122,4 +122,12 @@ public class AgenciaRestControllerException {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(DuplicatedColumnsException.class)
+    private ResponseEntity<ErrorDTO> handlerDuplicatedColumnsExcepcions(DuplicatedColumnsException ex){
+        ErrorDTO error =new ErrorDTO();
+        error.setError("ERROR");
+        error.setDescription(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
 }
