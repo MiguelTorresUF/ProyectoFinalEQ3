@@ -68,6 +68,9 @@ public class VuelosServiceImpl implements VuelosService{
                 .filter(
                     l -> l.getFlightNumber().equals(flightNumber)).findFirst();
 
+        if(!listFilter.isPresent()){
+            throw new ListEmptyException("No se encontró ningun vuelo");
+        }
 
         listFilter.get().setName(flights.getName());
         listFilter.get().setOrigin(flights.getOrigin());
