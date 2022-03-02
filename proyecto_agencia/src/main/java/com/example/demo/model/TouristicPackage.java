@@ -25,7 +25,7 @@ public class TouristicPackage {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date creation_date;
 
-    private String name;
+    //private String name;
 
     //fk
     @ManyToOne(cascade = CascadeType.PERSIST)
