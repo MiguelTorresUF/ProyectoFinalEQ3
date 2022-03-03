@@ -30,6 +30,8 @@ public class Hotel_booking {
     private String hotelCode;
     private String roomType;
     private int peopleAmount;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private Date created_at;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     //fk
@@ -42,6 +44,7 @@ public class Hotel_booking {
     @JoinColumn(name = "id_paymentMethod")
     private PaymentMethod paymentMethodH;
 
+    private double amount_booking;
 
     //mapeado por un objeto de la entidad
     @OneToMany(mappedBy = "hotel_booking_p", cascade = {CascadeType.ALL})
