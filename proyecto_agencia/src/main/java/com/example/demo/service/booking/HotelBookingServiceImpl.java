@@ -3,13 +3,17 @@ package com.example.demo.service.booking;
 import com.example.demo.dto.ResponseHotelBookingDTO;
 import com.example.demo.dto.US0003_US0006.PayloadHotelsDTO;
 import com.example.demo.dto.US0003_US0006.PeopleDTO;
+import com.example.demo.exception.*;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +29,9 @@ public class HotelBookingServiceImpl implements HotelBookingService{
     @Autowired
     HotelPeopleRepository hotelPeopleRepository;
 
+    @Autowired
+    HotelRepository hotelRepository;
+
     @Override
     public List<Hotel_booking> getHotelBooking() {
         hotelBookingRepository.findAll();
@@ -37,17 +44,52 @@ public class HotelBookingServiceImpl implements HotelBookingService{
 
     @Override
     public ResponseHotelBookingDTO postHotelBooking(PayloadHotelsDTO payloadHotelsDTO, String status) {
+        validHotelsParams(payloadHotelsDTO.getBooking().getDateFrom(), payloadHotelsDTO.getBooking().getDateTo(), payloadHotelsDTO.getBooking().getDestination());
+
+        //Restar dias
+        Date dateFrom = payloadHotelsDTO.getBooking().getDateFrom();
+        Date dateTo = payloadHotelsDTO.getBooking().getDateTo();
+        long restaDias = dateTo.getTime()-dateFrom.getTime();
+
+        TimeUnit time = TimeUnit.DAYS;
+        long diffrence = time.convert(restaDias, TimeUnit.MILLISECONDS);
+
+        //filtrado
+        List<Hotels> h = hotelRepository.findAll();
+        List<Hotels> hoteles = h.stream().filter(hotel ->
+                (hotel.getPlace().equals(payloadHotelsDTO.getBooking().getDestination()) && hotel.getHotelCode().equals(payloadHotelsDTO.getBooking().getHotelCode())) &&
+                        (hotel.getRoomType().equals(payloadHotelsDTO.getBooking().getRoomType())) && !hotel.isIsbooking()).collect(Collectors.toList());
+
+        if(hoteles.size() == 0 ){
+            throw new ListEmptyException("No se encontro el hotel ingresado");
+        }
+
+        //Validar tipo de cuarto con personas
+        validTypeRoom(payloadHotelsDTO.getBooking().getPeopleAmount(), hoteles.stream().map(Hotels::getRoomType).findFirst().get());
+
+        //Validar el tipo de metodo
+        int interest = validPaymentMethod(payloadHotelsDTO.getBooking().getPaymentMethod().getType(),payloadHotelsDTO.getBooking().getPaymentMethod().getDues());
+
+        //precio x noche
+        double precioPorNoche =  hoteles.stream().mapToDouble(Hotels::getRoomPrice).findFirst().getAsDouble();
+        double amount = precioPorNoche * diffrence;
+
+        double porciento = interest*0.01;
+        double total = (amount * porciento) + amount;
+
         // Extract data and save user in db
         Users user = new Users();
         user.setId_user(user.getId_user());
         user.setUserName(payloadHotelsDTO.getUsername());
         usersRepository.save(user);
+
         // Set paymentMethod
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setType(payloadHotelsDTO.getBooking().getPaymentMethod().getType());
         paymentMethod.setNumber(payloadHotelsDTO.getBooking().getPaymentMethod().getNumber());
         paymentMethod.setDues(payloadHotelsDTO.getBooking().getPaymentMethod().getDues());
         paymentMethodRepository.save(paymentMethod);
+
         // Set booking
         Hotel_booking booking = new Hotel_booking();
         booking.setDateFrom(payloadHotelsDTO.getBooking().getDateFrom());
@@ -57,8 +99,10 @@ public class HotelBookingServiceImpl implements HotelBookingService{
         booking.setPeopleAmount(payloadHotelsDTO.getBooking().getPeopleAmount());
         booking.setRoomType(payloadHotelsDTO.getBooking().getRoomType());
         booking.setPaymentMethodH(paymentMethod);
+        booking.setAmount_booking(total);
         booking.setUserH(user);
         hotelBookingRepository.save(booking);
+
         // Listing people
         List<PeopleDTO> peopleList = payloadHotelsDTO.getBooking().getPeople();
         peopleList.forEach(p -> {
@@ -87,17 +131,21 @@ public class HotelBookingServiceImpl implements HotelBookingService{
         booking.get().setHotelCode(payloadHotelsDTO.getBooking().getHotelCode());
         booking.get().setPeopleAmount(payloadHotelsDTO.getBooking().getPeopleAmount());
         booking.get().setRoomType(payloadHotelsDTO.getBooking().getRoomType());
+
         // Payment method
         booking.get().getPaymentMethodH().setDues(payloadHotelsDTO.getBooking().getPaymentMethod().getDues());
         booking.get().getPaymentMethodH().setNumber(payloadHotelsDTO.getBooking().getPaymentMethod().getNumber());
         booking.get().getPaymentMethodH().setType(payloadHotelsDTO.getBooking().getPaymentMethod().getType());
+
         // User
         booking.get().getUserH().setUserName(payloadHotelsDTO.getUsername());
+
         // People
         List<Hotel_people> allPeople = hotelPeopleRepository.findAll();
         List<Hotel_people> people =  allPeople.stream().filter(lp ->
                 lp.getHotel_booking_p().getBooking_id() ==
                         (booking.get().getBooking_id())).collect(Collectors.toList());
+
         List<PeopleDTO> p = payloadHotelsDTO.getBooking().getPeople();
         for (int i=0; i < payloadHotelsDTO.getBooking().getPeopleAmount(); i++){
             Optional<People> person = peopleRepository.findById(people.get(i).getPeople_hb().getId_people());
@@ -133,5 +181,118 @@ public class HotelBookingServiceImpl implements HotelBookingService{
         usersRepository.deleteById(idUser);
         // Delete people_booking
         return new ResponseHotelBookingDTO("Reserva de hotel dada de baja correctamente.");
+    }
+
+
+
+
+
+
+
+
+
+    //---------validaciones
+    private void validHotelsParams(Date dateFrom, Date dateTo, String destination){
+        if(destination == null || destination == ""){
+            throw new NotDestinationException("El destino ingresado no existe.");
+        }
+
+        //Verifica el destino
+        List<Hotels> listaHotel = hotelRepository.findAll();
+
+        List<Hotels> newList = listaHotel.stream().filter(
+                        hotel -> (hotel.getPlace().equals(destination)))
+                .collect(Collectors.toList());
+
+        //Si no hay ningun destino que se llame como el que ingresamos, manda la excepcion
+        if(newList.size() == 0)
+        {
+            throw new NotDestinationException("El destino ingresado no existe.");
+        }
+
+        //compara fechas
+        if(dateFrom.compareTo(dateTo) > 0)
+        {
+            throw new BadDateException("Alguna fecha es incorrecta. La fecha de entrada tiene que ser menor que la de salida.");
+        }
+    }
+
+    private void validTypeRoom(int peopleAmount, String typeRoom) {
+        String message = "La habitacion no coincide con el numero de personas.";
+        switch(peopleAmount)
+        {
+            case 1:
+                if(!(typeRoom.equals("Single")))
+                {
+                    throw new BadTypeRoomException(message);
+                }
+                break;
+
+            case 2:
+                if(!(typeRoom.equals("Doble")))
+                {
+                    throw new BadTypeRoomException(message);
+                }
+                break;
+
+            case 3:
+                if(!(typeRoom.equals("Triple")))
+                {
+                    throw new BadTypeRoomException(message);
+                }
+                break;
+
+            case 4:
+            case 5:
+                if(!(typeRoom.equals("Multiple")))
+                {
+                    throw new BadTypeRoomException(message);
+                }
+                break;
+        }
+    }
+
+    private int validPaymentMethod(String type, int dues) {
+        int interest = 0;
+        if(Objects.equals(type,"DEBITO")) {
+            switch (dues) {
+                case 1:
+                    interest = 0;
+                    break;
+                default: throw new PaymentMethodException("El Tipo de pago que hiciste fue con DEBITO por favor poner 1 en su couta de pago.");
+            }
+        }
+        else if(Objects.equals(type, "CREDITO")){
+            switch(dues) {
+                case 1:
+                case 2:
+                case 3:
+                    interest = 5;
+                    break;
+
+                case 4:
+                case 5:
+                case 6:
+                    interest = 10;
+                    break;
+
+                case 10:
+                case 11:
+                case 12:
+                    interest = 20;
+                    break;
+
+                case 16:
+                case 17:
+                case 18:
+                    interest = 30;
+                    break;
+
+                default: throw new InterestNotValidException("Ingrese un interes valido. (1-3, 4-6, 10-12, 16-18)");
+            }
+        }else{
+            throw new CashInvalidException("El metodo de pago no es el correcto.");
+        }
+        return interest;
     }
 }

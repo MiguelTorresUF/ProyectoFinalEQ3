@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResponseDataHotelsDTO {
     private String message;
-
 }
