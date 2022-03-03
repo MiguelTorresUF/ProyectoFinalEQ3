@@ -32,4 +32,11 @@ public class HotelBookingRestController {
     public ResponseEntity<?> deleteHotelBooking(@RequestParam int id){
         return new ResponseEntity<>(hotelBookingService.deleteHotelBooking(id),HttpStatus.OK);
     }
+
+    // Req #4
+    @GetMapping(path = "/api/v1/clients/top-3")
+    public ResponseEntity<?> top3(){
+        return new ResponseEntity<>(hotelBookingService.top3(), HttpStatus.OK);
+    }
+
 }
