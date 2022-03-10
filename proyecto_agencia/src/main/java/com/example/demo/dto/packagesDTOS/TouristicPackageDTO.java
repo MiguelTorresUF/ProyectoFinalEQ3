@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -19,5 +20,9 @@ public class TouristicPackageDTO {
     @NotNull(message = "Se debe ingresar el 'userid'")
     private int userid;
     //@NotEmpty(message = "Se debe ingresar los id de reservacion")
-    private TourBORDTO tourBOR;
+    //private TourBORDTO tourBOR;
+    //PASAR DATOS DE POSTMAN
+    private Integer book_res_id1;
+    private Integer book_res_id2;
+    private double total;
 }

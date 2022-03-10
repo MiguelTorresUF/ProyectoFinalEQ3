@@ -36,4 +36,7 @@ public class TouristicPackage {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "bookings_or_reservations")
     private TourBOR fk_bookings_or_reservations;
+    private double total;
+    private Integer book_res_id1;
+    private Integer book_res_id2;
 }

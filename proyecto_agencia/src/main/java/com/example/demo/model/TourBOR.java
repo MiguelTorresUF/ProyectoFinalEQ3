@@ -32,4 +32,8 @@ public class TourBOR {
     //mapeos
     @OneToMany(mappedBy = "fk_bookings_or_reservations", cascade = {CascadeType.ALL})
     private Set<TouristicPackage> touristicPackages;
+
+    //Implementacion nueva
+
+
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourBORDTO {
-    private BookingOrReservationDTO book_res_id1;
-    private BookingOrReservationDTO book_res_id2;
+    private Integer book_res_id1;
+    private Integer book_res_id2;
+
 }

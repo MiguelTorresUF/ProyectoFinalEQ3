@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class BookingOrReservationDTO {
-    private int id_booking;
-    private int id_reservation;
+@NoArgsConstructor
+@Data
+public class ResponsePackageDTO {
+    private String message;
 }

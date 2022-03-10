@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.packagesDTOS.TouristicPackageDTO;
 import com.example.demo.model.Flights;
+import com.example.demo.model.TouristicPackage;
 import com.example.demo.service.flight.VuelosService;
 import com.example.demo.service.touristicPackage.TouristicPackageService;
 import org.springframework.beans.factory.annotation.Autowired;
